@@ -5,3 +5,4 @@ data/
 *.py
 *.md
 !dataset.py
+!trainECAPAModel.py

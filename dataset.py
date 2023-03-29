@@ -4,12 +4,13 @@ Datasets
 
 import os
 import random
-import soundfile
 import torch
+import torchaudio
 import numpy as np
 import pandas as pd
 import soundfile as sf
 from tqdm import tqdm
+from mutagen.flac import FLAC
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -27,7 +28,7 @@ class CNCeleb(Dataset):
                     utt_paths.append(utt_path)
                     speaker_int_labels.append(label)
         else:
-            utt_tuples, speakers = findAllUtt(data_dir, extension='flac', speaker_level=1)
+            utt_tuples, speakers = findAllUtt(train_path, extension='flac', speaker_level=1)
             utt_tuples = np.array(utt_tuples, dtype=str)
             utt_paths = utt_tuples.T[0]
             speaker_int_labels = utt_tuples.T[1].astype(int)
@@ -49,7 +50,8 @@ class CNCeleb(Dataset):
         # Load data & labels
         self.data_list = utt_paths
         self.data_label = speaker_int_labels
-        print("find {} speakers".format(len(np.unique(self.data_label))))
+        self.n_class = len(np.unique(self.data_label))
+        print("find {} speakers".format(self.n_class))
         print("find {} utterance".format(len(self.data_list)))
 
     def __getitem__(self, index):
@@ -109,4 +111,5 @@ if __name__ == "__main__":
         print('data:', data.shape, data)
         print('label', label.shape, label)
         break
+
 
