@@ -8,3 +8,5 @@ data/
 !trainECAPAModel.py
 !loss.py
 !model.py
+!ECAPAModel.py
+!tools.py
