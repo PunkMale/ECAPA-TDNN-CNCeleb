@@ -73,24 +73,17 @@ model_files.sort()
 ## 只进行测试，前提是有初始模型
 if args.eval:
     model = ECAPAModel(**vars(args))
+    model.load_state_dict(args.initial_model)
     print("Model {} 已加载!".format(args.initial_model))
-    model.load_parameters(args.initial_model)
     EER, minDCF = model.eval_network(eval_list=args.eval_list, eval_path=args.eval_path)
-    print("EER %2.2f%%, minDCF %.4f%%" % (EER, minDCF))
+    print('EER:{:.4}  minDCF:{:.4}'.format(EER, minDCF))
     quit()
 
 ## 如果初始模型存在，系统将从初始模型开始训练
-if args.initial_model != "":
+if args.resume and args.initial_model != "":
     print("Model {} 已加载!".format(args.initial_model))
     model = ECAPAModel(**vars(args))
-    model.load_parameters(args.initial_model)
-    epoch = 0
-## 尝试从已保存的模型和epoch开始
-elif args.resume and len(model_files) >= 1:
-    print("Model %s loaded from previous state!" % model_files[-1])
-    epoch = int(os.path.splitext(os.path.basename(model_files[-1]))[0][6:]) + 1
-    model = ECAPAModel(**vars(args))
-    model.load_parameters(model_files[-1])
+    epoch = model.load_state_dict(args.initial_model)
 ## 系统从头开始训练
 else:
     model = ECAPAModel(**vars(args))
@@ -105,7 +98,7 @@ while epoch < args.max_epoch:
 
     ## 评估模型
     if epoch % args.test_step == 0:
-        model.save_parameters(os.path.join(args.model_save_path, 'epoch_{}_acc_{}.pth'.format(epoch, acc)))
+        model.save_parameters(os.path.join(args.model_save_path, 'epoch_{}_acc_{}.pth'.format(epoch, acc)), epoch)
         EER, minDCF = model.eval_network(eval_list=args.eval_list, eval_path=args.eval_path)
         EERs.append(EER)
         print('EER:{:.4}  minDCF:{:.4}   bestEER:{:.4}'.format(EER, minDCF, min(EERs)))
