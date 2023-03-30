@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import soundfile as sf
 from tqdm import tqdm
-from mutagen.flac import FLAC
 from torch.utils.data import Dataset, DataLoader
 
 
@@ -69,7 +68,7 @@ class CNCeleb(Dataset):
         return len(self.data_list)
 
 
-def findAllUtt(dirName, extension='wav', speaker_level=1):
+def findAllUtt(dirName, extension='flac', speaker_level=1):
     if dirName[-1] != os.sep:
         dirName += os.sep
     prefixSize = len(dirName)
@@ -101,15 +100,35 @@ def findAllUtt(dirName, extension='wav', speaker_level=1):
     return utt_tuples, outSpeakers
 
 
+def create_cnceleb_trails(cnceleb_root, trails_path, extension='flac'):
+    enroll_lst_path = os.path.join(cnceleb_root, "eval/lists/enroll.lst")
+    raw_trl_path = os.path.join(cnceleb_root, "eval/lists/trials.lst")
+
+    spk2wav_mapping = {}
+    enroll_lst = np.loadtxt(enroll_lst_path, str)
+    for item in tqdm(enroll_lst):
+        path = os.path.splitext(item[1])
+        spk2wav_mapping[item[0]] = path[0] + '.{}'.format(extension)
+    trials = np.loadtxt(raw_trl_path, str)
+
+    with open(trails_path, "w") as f:
+        for item in tqdm(trials):
+            enroll_path = os.path.join(cnceleb_root, "eval", spk2wav_mapping[item[0]])
+            test_path = os.path.join(cnceleb_root, "eval", item[1])
+            test_path = os.path.splitext(test_path)[0] + '.{}'.format(extension)
+            label = item[2]
+            f.write("{} {} {}\n".format(label, enroll_path, test_path))
+
+
 if __name__ == "__main__":
-    data_dir = '/home2/database/sre/CN-Celeb-2022/task1/cn_2/data'
+    cn1_root = '/home2/database/sre/CN-Celeb-2022/task1/cn_1'
+    cn2_dev = '/home2/database/sre/CN-Celeb-2022/task1/cn_2/data'
     train_list_path = 'data/cn2_train_list.csv'
-    dataset = CNCeleb(train_list_path, data_dir, 200)
+    dataset = CNCeleb(train_list_path, cn1_root, 200)
     loader = DataLoader(dataset, batch_size=5, shuffle=True)
     for idx, batch in enumerate(loader):
         data, label = batch
         print('data:', data.shape, data)
         print('label', label.shape, label)
         break
-
 

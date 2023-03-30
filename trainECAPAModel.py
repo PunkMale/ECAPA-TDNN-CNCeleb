@@ -26,13 +26,13 @@ parser.add_argument('--n_cpu', type=int, default=4, help='DataLoader时使用多
 parser.add_argument('--test_step', type=int, default=1, help='跑几个epoch测试一下性能')
 parser.add_argument('--lr', type=float, default=0.001, help='学习率')
 parser.add_argument("--lr_decay", type=float, default=0.97, help='学习率衰减率')
-parser.add_argument("--device", type=str, default='cuda:5', help='训练设备')
+parser.add_argument("--device", type=str, default='cuda:0', help='训练设备')
 
 ## 训练、测试路径、模型保存路径
 parser.add_argument('--train_list', type=str, default="data/cn2_train_list.csv", help='训练列表')
 parser.add_argument('--train_path', type=str, default=cn2_dev, help='训练数据路径')
-parser.add_argument('--eval_list', type=str, default="data/cn2_train_list.csv", help='测试trails')
-parser.add_argument('--eval_path', type=str, default="/home2/database/voxceleb/voxceleb1/test/wav", help='测试数据路径')
+parser.add_argument('--eval_list', type=str, default="data/trials.lst", help='测试trails')
+parser.add_argument('--eval_path', type=str, default="/home2/database/sre/CN-Celeb-2022/task1/cn_1", help='测试数据路径')
 parser.add_argument('--save_path', type=str, default="exps/cn2", help='模型保存路径')
 
 ## 设置embedding维度和margin loss超参数
@@ -92,15 +92,15 @@ score_file = open(args.score_save_path, "a+")
 
 while epoch < args.max_epoch:
     ## 训练模型
-    loss, lr, acc = model.train_network(epoch=epoch, loader=trainLoader)
+    # loss, lr, acc = model.train_network(epoch=epoch, loader=trainLoader)
 
-    # ## 评估模型
-    # if epoch % args.test_step == 0:
-    #     model.save_parameters(args.model_save_path + "/model_%04d.model" % epoch)
-    #     EER, minDCF = model.eval_network(eval_list=args.eval_list, eval_path=args.eval_path)
-    #     EERs.append(EER)
-    #     print(time.strftime("%Y-%m-%d %H:%M:%S"), "%d epoch, ACC %2.2f%%, EER %2.2f%%, bestEER %2.2f%%" % (epoch, acc, EERs[-1], min(EERs)))
-    #     score_file.write("%d epoch, LR %f, LOSS %f, ACC %2.2f%%, EER %2.2f%%, bestEER %2.2f%%\n" % (epoch, lr, loss, acc, EERs[-1], min(EERs)))
-    #     score_file.flush()  # 刷新缓冲区
-
+    ## 评估模型
+    if epoch % args.test_step == 0:
+        # model.save_parameters(args.model_save_path + "/model_%04d.model" % epoch)
+        EER, minDCF = model.eval_network(eval_list=args.eval_list, eval_path=args.eval_path)
+        print('EER:{:.4}  minDCF:{:.4}'.format(EER, minDCF))
+        # EERs.append(EER)
+        # print(time.strftime("%Y-%m-%d %H:%M:%S"), "%d epoch, ACC %2.2f%%, EER %2.2f%%, bestEER %2.2f%%" % (epoch, acc, EERs[-1], min(EERs)))
+        # score_file.write("%d epoch, LR %f, LOSS %f, ACC %2.2f%%, EER %2.2f%%, bestEER %2.2f%%\n" % (epoch, lr, loss, acc, EERs[-1], min(EERs)))
+        # score_file.flush()  # 刷新缓冲区
     epoch += 1
