@@ -2,7 +2,7 @@
 这个项目基于 [ECAPA-TDNN](https://github.com/TaoRuijie/ECAPA-TDNN) 所修改。
 
 ## 性能
-> 代码还未完成，见谅！
+> 还在测试中，见谅。
 
 # Quick Start
 
