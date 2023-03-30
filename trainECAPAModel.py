@@ -4,7 +4,7 @@ This is the main code of the ECAPATDNN project, to define the parameters and bui
 
 import argparse
 import glob
-import time
+import datetime
 import torch
 import warnings
 
@@ -55,6 +55,8 @@ parser.add_argument('--eval', dest='eval', action='store_true', help='训练还�
 parser.add_argument('--resume', dest='resume', action='store_true', help='是否恢复之前的训练')
 parser.add_argument('--initial_model', type=str, default=initial_model, help='从哪个模型继续')
 
+
+train_start_time = datetime.datetime.now()
 ## 初始化、设置模型和打分文件保存路径
 warnings.simplefilter("ignore")  # 忽略警告
 torch.multiprocessing.set_sharing_strategy('file_system')
@@ -93,6 +95,7 @@ EERs = []
 score_file = open(args.score_save_path, "a+")
 
 while epoch < args.max_epoch:
+    epoch_start_time = datetime.datetime.now()
     ## 训练模型
     loss, lr, acc = model.train_network(epoch=epoch, loader=trainLoader)
 
@@ -103,3 +106,13 @@ while epoch < args.max_epoch:
         EERs.append(EER)
         print('EER:{:.4}  minDCF:{:.4}   bestEER:{:.4}'.format(EER, minDCF, min(EERs)))
     epoch += 1
+
+    # 记录训练时间
+    epoch_end_time = datetime.datetime.now()
+    epoch_time = epoch_end_time - epoch_start_time
+    print('\nthis epoch time:{}'.format(epoch_time))
+
+# 记录总训练时间
+train_end_time = datetime.datetime.now()
+train_time = train_end_time - train_start_time
+print('\ntotal train time:{}'.format(train_time))
