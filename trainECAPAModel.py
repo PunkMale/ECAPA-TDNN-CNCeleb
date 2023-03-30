@@ -13,27 +13,35 @@ from ECAPAModel import ECAPAModel
 from dataset import CNCeleb
 from tools import *
 
-cn1_test = '/home2/database/sre/CN-Celeb-2022/task1/cn_1/'
+
+#################  你需要修改的一些路径  #################
+cn1_root = '/home2/database/sre/CN-Celeb-2022/task1/cn_1/'
 cn2_dev = '/home2/database/sre/CN-Celeb-2022/task1/cn_2/data'
 train_list_path = 'data/cn2_train_list.csv'
+trials_path = "data/trials.lst"
+save_path = "exps/cn2"
+device = 'cuda:0'
+batch_size = 64
+initial_model = ''
+######################################################
 
 parser = argparse.ArgumentParser(description="ECAPA_trainer")
 ## Training Settings
 parser.add_argument('--num_frames', type=int, default=200, help='输入语音长度，200帧为2秒')
 parser.add_argument('--max_epoch', type=int, default=80, help='训练多少个epoch')
-parser.add_argument('--batch_size', type=int, default=64, help='Batch size')
+parser.add_argument('--batch_size', type=int, default=batch_size, help='Batch size')
 parser.add_argument('--n_cpu', type=int, default=4, help='DataLoader时使用多少核心')
 parser.add_argument('--test_step', type=int, default=1, help='跑几个epoch测试一下性能')
 parser.add_argument('--lr', type=float, default=0.001, help='学习率')
 parser.add_argument("--lr_decay", type=float, default=0.97, help='学习率衰减率')
-parser.add_argument("--device", type=str, default='cuda:0', help='训练设备')
+parser.add_argument("--device", type=str, default=device, help='训练设备')
 
 ## 训练、测试路径、模型保存路径
-parser.add_argument('--train_list', type=str, default="data/cn2_train_list.csv", help='训练列表')
+parser.add_argument('--train_list', type=str, default=train_list_path, help='训练列表')
 parser.add_argument('--train_path', type=str, default=cn2_dev, help='训练数据路径')
-parser.add_argument('--eval_list', type=str, default="data/trials.lst", help='测试trails')
-parser.add_argument('--eval_path', type=str, default="/home2/database/sre/CN-Celeb-2022/task1/cn_1", help='测试数据路径')
-parser.add_argument('--save_path', type=str, default="exps/cn2", help='模型保存路径')
+parser.add_argument('--eval_list', type=str, default=trials_path, help='测试trails')
+parser.add_argument('--eval_path', type=str, default=cn1_root, help='测试数据路径')
+parser.add_argument('--save_path', type=str, default=save_path, help='模型保存路径')
 
 ## 设置embedding维度和margin loss超参数
 parser.add_argument('--C', type=int, default=1024, help='Channel size for the speaker encoder')
@@ -44,7 +52,7 @@ parser.add_argument('--n_class', type=int, help='Number of speakers')
 ## 运行模式
 parser.add_argument('--eval', dest='eval', action='store_true', help='训练还是测试')
 parser.add_argument('--resume', dest='resume', action='store_true', help='是否恢复之前的训练')
-parser.add_argument('--initial_model', type=str, default='', help='从哪个模型继续')
+parser.add_argument('--initial_model', type=str, default=initial_model, help='从哪个模型继续')
 
 ## 初始化、设置模型和打分文件保存路径
 warnings.simplefilter("ignore")  # 忽略警告

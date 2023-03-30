@@ -4,7 +4,6 @@
 *.csv
 data/
 *.py
-*.md
 !dataset.py
 !trainECAPAModel.py
 !loss.py
