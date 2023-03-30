@@ -32,7 +32,7 @@ class ECAPAModel(nn.Module):
         self.scheduler.step(epoch - 1)
         index, correct, loss = 0, 0, 0
         lr = self.optim.param_groups[0]['lr']
-        print(time.strftime("%m-%d %H:%M:%S"))
+        print('\nEpoch {}  '.format(epoch), time.strftime("%m-%d %H:%M:%S"))
         progress = tqdm(loader)
         for num, (data, labels) in enumerate(progress, start=1):
             progress.set_description("Epoch {}".format(epoch))
@@ -53,7 +53,7 @@ class ECAPAModel(nn.Module):
             )
 
         progress.close()
-        return loss / num, lr, correct / index
+        return loss / num, lr, int(100 * correct / index)
 
     def eval_network(self, eval_list, eval_path):
         self.eval()
@@ -116,7 +116,7 @@ class ECAPAModel(nn.Module):
         return EER, minDCF
 
     def save_parameters(self, path):
-        torch.save(self.state_dict(), path)
+        torch.save(self, path)
 
     def load_parameters(self, path):
         self_state = self.state_dict()
