@@ -22,6 +22,7 @@ trials_path = "data/trials.lst"
 save_path = "exps/lr0.01"
 device = 'cuda:0'
 batch_size = 64
+eval_step = 5
 initial_model = ''
 ######################################################
 
@@ -100,7 +101,7 @@ while epoch < args.max_epoch:
     model.save_parameters(os.path.join(args.model_save_path, 'epoch_{}_acc_{}.pth'.format(epoch, acc)), epoch)
 
     # 评估模型
-    if epoch % 5 == 0:
+    if epoch % eval_step == 0:
         EER, minDCF = model.eval_network(eval_list=args.eval_list, eval_path=args.eval_path)
         EERs.append(EER)
         print('EER:{:.4} minDCF:{:.4} bestEER:{:.4}'.format(EER, minDCF, min(EERs)))

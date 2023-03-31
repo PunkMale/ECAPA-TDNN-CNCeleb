@@ -106,13 +106,13 @@ def create_cnceleb_trails(cnceleb_root, trails_path, extension='flac'):
 
     spk2wav_mapping = {}
     enroll_lst = np.loadtxt(enroll_lst_path, str)
-    for item in tqdm(enroll_lst):
+    for item in tqdm(enroll_lst, desc='speaker mapping', mininterval=2, ncols=50):
         path = os.path.splitext(item[1])
         spk2wav_mapping[item[0]] = path[0] + '.{}'.format(extension)
     trials = np.loadtxt(raw_trl_path, str)
 
     with open(trails_path, "w") as f:
-        for item in tqdm(trials):
+        for item in tqdm(trials, desc='handle trials', mininterval=2, ncols=50):
             enroll_path = os.path.join(cnceleb_root, "eval", spk2wav_mapping[item[0]])
             test_path = os.path.join(cnceleb_root, "eval", item[1])
             test_path = os.path.splitext(test_path)[0] + '.{}'.format(extension)
