@@ -19,10 +19,9 @@ cn1_root = '/home2/database/sre/CN-Celeb-2022/task1/cn_1/'
 cn2_dev = '/home2/database/sre/CN-Celeb-2022/task1/cn_2/data'
 train_list_path = 'data/cn2_train_list.csv'
 trials_path = "data/trials.lst"
-save_path = "exps/cn2"
-device = 'cuda:5'
+save_path = "exps/lr0.01"
+device = 'cuda:0'
 batch_size = 64
-test_step = 3
 initial_model = ''
 ######################################################
 
@@ -32,9 +31,9 @@ parser.add_argument('--num_frames', type=int, default=200, help='输入语音长
 parser.add_argument('--max_epoch', type=int, default=80, help='训练多少个epoch')
 parser.add_argument('--batch_size', type=int, default=batch_size, help='Batch size')
 parser.add_argument('--n_cpu', type=int, default=4, help='DataLoader时使用多少核心')
-parser.add_argument('--test_step', type=int, default=test_step, help='跑几个epoch测试一下性能')
+parser.add_argument('--test_step', type=int, default=1, help='跑几个epoch测试一下性能')
 parser.add_argument('--lr', type=float, default=0.001, help='学习率')
-parser.add_argument("--lr_decay", type=float, default=0.97, help='学习率衰减率')
+parser.add_argument("--lr_decay", type=float, default=0.9, help='学习率衰减率')
 parser.add_argument("--device", type=str, default=device, help='训练设备')
 
 ## 训练、测试路径、模型保存路径
@@ -98,13 +97,13 @@ while epoch < args.max_epoch:
     epoch_start_time = datetime.datetime.now()
     ## 训练模型
     loss, lr, acc = model.train_network(epoch=epoch, loader=trainLoader)
+    model.save_parameters(os.path.join(args.model_save_path, 'epoch_{}_acc_{}.pth'.format(epoch, acc)), epoch)
 
-    ## 评估模型
-    if epoch % args.test_step == 0:
-        model.save_parameters(os.path.join(args.model_save_path, 'epoch_{}_acc_{}.pth'.format(epoch, acc)), epoch)
+    # 评估模型
+    if epoch % 5 == 0:
         EER, minDCF = model.eval_network(eval_list=args.eval_list, eval_path=args.eval_path)
         EERs.append(EER)
-        print('EER:{:.4}  minDCF:{:.4}   bestEER:{:.4}'.format(EER, minDCF, min(EERs)))
+        print('EER:{:.4} minDCF:{:.4} bestEER:{:.4}'.format(EER, minDCF, min(EERs)))
     epoch += 1
 
     # 记录训练时间

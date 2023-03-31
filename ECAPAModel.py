@@ -118,10 +118,12 @@ class ECAPAModel(nn.Module):
     def save_parameters(self, path, epoch):
         state = {'model': self.state_dict(), 'optimizer': self.optim.state_dict(), 'epoch': epoch}
         torch.save(state, path)
+        print('{} saved!'.format(path))
 
     def load_parameters(self, path):
         checkpoint = torch.load(path)
         self.load_state_dict(checkpoint['model'])
         self.optim.load_state_dict(checkpoint['optimizer'])
         epoch = checkpoint(['epoch'])
+        print('{} loaded!'.format(path))
         return epoch
