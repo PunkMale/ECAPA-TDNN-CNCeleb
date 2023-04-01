@@ -1,13 +1,16 @@
 # 介绍
-这个项目基于 [ECAPA-TDNN](https://github.com/TaoRuijie/ECAPA-TDNN) 所修改。
+
+此项目针对 CN-Celeb 数据集所开发，框架采用 `ECAPA-TDNN + AAM-Softmax`。
 
 ## 性能
-> 还在测试中，见谅。
+
+|   训练数据   |    测试数据     | EER (%) | minDCF (0.01) |
+|:--------:|:-----------:|:-------:|:-------------:|
+| CN-2-dev | CN-1-trials |    11.7 |    0.4999     |
 
 # Quick Start
 
 ## 准备工作
-此项目针对 [CN-Celeb](http://cnceleb.org/) 数据集进行训练测试。
 
 ### 数据
 * CN-Celeb 1  [[点此下载]](http://openslr.org/82/)
@@ -36,12 +39,9 @@ pip install -r requirements.txt -i https://pypi.mirrors.ustc.edu.cn/simple/
 3. 运行 `python trainECAPAModel.py`
 
 ## 测试
-运行`python trainECAPAModel.py --eval`
+1. 在主程序中设置定义 `initial_model` 路径
+2. 运行`python trainECAPAModel.py --eval`
 
 ## Acknowledge
 
-参考了以下这些项目，感谢各位前辈！
-
-[TaoRuijie/ECAPA-TDNN](https://github.com/TaoRuijie/ECAPA-TDNN)
-
-[Lantian Li/Sunine](https://gitlab.com/csltstu/sunine)
+本项目基于 [TaoRuijie/ECAPA-TDNN](https://github.com/TaoRuijie/ECAPA-TDNN) 修改，并参考了 [Lantian Li/Sunine](https://gitlab.com/csltstu/sunine)。
