@@ -124,6 +124,6 @@ class ECAPAModel(nn.Module):
         checkpoint = torch.load(path)
         self.load_state_dict(checkpoint['model'])
         self.optim.load_state_dict(checkpoint['optimizer'])
-        epoch = checkpoint(['epoch'])
+        epoch = checkpoint['epoch']
         print('{} loaded!'.format(path))
-        return epoch
+        return epoch+1

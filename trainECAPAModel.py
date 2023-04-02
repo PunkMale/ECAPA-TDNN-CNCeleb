@@ -21,15 +21,16 @@ train_list_path = 'data/cn2_train_list.csv'
 trials_path = "data/trials.lst"
 save_path = "exps/lr0.01"
 device = 'cuda:0'
+max_epoch = 80
 batch_size = 64
 eval_step = 5
-initial_model = ''
+initial_model = 'exps/lr0.01/model/epoch_64_acc_87.pth'
 ######################################################
 
 parser = argparse.ArgumentParser(description="ECAPA_trainer")
 ## Training Settings
 parser.add_argument('--num_frames', type=int, default=200, help='输入语音长度，200帧为2秒')
-parser.add_argument('--max_epoch', type=int, default=80, help='训练多少个epoch')
+parser.add_argument('--max_epoch', type=int, default=max_epoch, help='训练多少个epoch')
 parser.add_argument('--batch_size', type=int, default=batch_size, help='Batch size')
 parser.add_argument('--n_cpu', type=int, default=4, help='DataLoader时使用多少核心')
 parser.add_argument('--test_step', type=int, default=1, help='跑几个epoch测试一下性能')
@@ -83,9 +84,9 @@ if args.eval:
 
 ## 如果初始模型存在，系统将从初始模型开始训练
 if args.resume and args.initial_model != "":
-    print("Model {} 已加载!".format(args.initial_model))
     model = ECAPAModel(**vars(args))
-    epoch = model.load_state_dict(args.initial_model)
+    epoch = model.load_parameters(args.initial_model)
+    print("Model {} 已加载!".format(args.initial_model))
 ## 系统从头开始训练
 else:
     model = ECAPAModel(**vars(args))
