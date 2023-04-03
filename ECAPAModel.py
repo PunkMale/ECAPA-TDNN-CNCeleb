@@ -32,8 +32,8 @@ class ECAPAModel(nn.Module):
         self.scheduler.step(epoch - 1)
         index, correct, loss = 0, 0, 0
         lr = self.optim.param_groups[0]['lr']
-        print('\nEpoch {}  '.format(epoch), time.strftime("%m-%d %H:%M:%S"))
-        progress = tqdm(loader, mininterval=2, ncols=50)
+        print('\nEpoch {}'.format(epoch), time.strftime("%m-%d %H:%M:%S"))
+        progress = tqdm(loader, mininterval=2, ncols=90)
         for num, (data, labels) in enumerate(progress, start=1):
             progress.set_description("Epoch {}".format(epoch))
             self.zero_grad()
@@ -47,9 +47,9 @@ class ECAPAModel(nn.Module):
             loss += nloss.detach().cpu().numpy()
             progress.update()
             progress.set_postfix(
-                lr=f"{lr:.6f}",
-                loss=f"{loss/num:.4f}",
-                acc=f"{100 * correct / index:.4f}",
+                lr='{:.4}'.format(lr),
+                loss='{:.4}'.format(loss/num),
+                acc='{:.4}'.format(100 * correct / index),
             )
 
         progress.close()
@@ -71,7 +71,7 @@ class ECAPAModel(nn.Module):
         setfiles.sort()
 
         print('extract embedding:')
-        for idx, file in tqdm(enumerate(setfiles), total=len(setfiles), mininterval=2, ncols=50):
+        for idx, file in tqdm(enumerate(setfiles), total=len(setfiles), mininterval=2, ncols=90):
             audio, _ = soundfile.read(file)
             # Full utterance
             data_1 = torch.FloatTensor(numpy.stack([audio], axis=0)).to(self.device)
@@ -97,7 +97,7 @@ class ECAPAModel(nn.Module):
         scores, labels = [], []
 
         print('scoring:')
-        for line in tqdm(lines, mininterval=2, ncols=50):
+        for line in tqdm(lines, mininterval=2, ncols=90):
             embedding_11, embedding_12 = embeddings[line.split()[1]]
             embedding_21, embedding_22 = embeddings[line.split()[2]]
             # Compute the scores

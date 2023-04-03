@@ -19,12 +19,12 @@ cn1_root = '/home2/database/sre/CN-Celeb-2022/task1/cn_1/'
 cn2_dev = '/home2/database/sre/CN-Celeb-2022/task1/cn_2/data'
 train_list_path = 'data/cn2_train_list.csv'
 trials_path = "data/trials.lst"
-save_path = "exps/lr0.01"
+save_path = "exps/exp1"
 device = 'cuda:0'
 max_epoch = 80
 batch_size = 64
 eval_step = 5
-initial_model = 'exps/lr0.01/model/epoch_64_acc_87.pth'
+initial_model = ''
 ######################################################
 
 parser = argparse.ArgumentParser(description="ECAPA_trainer")
